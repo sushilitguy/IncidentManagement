@@ -83,4 +83,12 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    /**
+     * Returns User object
+     * @return AppUser object
+     */
+    public AppUsers getUser() {
+        return user;
+    }
 }

@@ -4,6 +4,7 @@ import com.demo.incidentmanagement.dto.ForgotPasswordRequest;
 import com.demo.incidentmanagement.dto.UpdatePasswordRequest;
 import com.demo.incidentmanagement.dto.UserLoginRequest;
 import com.demo.incidentmanagement.dto.UserRegisterRequest;
+import com.demo.incidentmanagement.dto.response.AuthSuccessResponse;
 import com.demo.incidentmanagement.model.AppUsers;
 import com.demo.incidentmanagement.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,15 @@ public class AppUserController {
      * @return token if authentication is successful else message "Failure"
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest loginRequest) {
-        String result = service.verify(loginRequest);
-        if(!result.equals("Failure")) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<AuthSuccessResponse> login(@RequestBody UserLoginRequest loginRequest) {
+        System.out.println("In Login");
+        AuthSuccessResponse response = service.verify(loginRequest);
+        if(response != null) {
+            System.out.println("Login Success : " + response);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Invalid UserName or Password", HttpStatus.UNAUTHORIZED);
+            System.out.println("Login Failed");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 

@@ -4,9 +4,11 @@ import com.demo.incidentmanagement.dto.ForgotPasswordRequest;
 import com.demo.incidentmanagement.dto.UpdatePasswordRequest;
 import com.demo.incidentmanagement.dto.UserLoginRequest;
 import com.demo.incidentmanagement.dto.UserRegisterRequest;
+import com.demo.incidentmanagement.dto.response.AuthSuccessResponse;
 import com.demo.incidentmanagement.exception.IncidentException;
 import com.demo.incidentmanagement.model.AppUsers;
 import com.demo.incidentmanagement.model.AppUsersData;
+import com.demo.incidentmanagement.model.UserPrincipal;
 import com.demo.incidentmanagement.model.UserType;
 import com.demo.incidentmanagement.repo.AppUsersRepo;
 import com.demo.incidentmanagement.util.PasswordUtility;
@@ -52,14 +54,17 @@ public class AppUserService {
      * @param userLoginRequest Request object received from client
      * @return token if authentication is successful else message "Failure"
      */
-    public String verify(UserLoginRequest userLoginRequest) {
+    public AuthSuccessResponse verify(UserLoginRequest userLoginRequest) {
         Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.email(),userLoginRequest.password()));
+        AuthSuccessResponse response = null;
 
         if(auth.isAuthenticated()) {
-            return jwtService.generateToken(userLoginRequest.email());
-        } else {
-            return "Failure";
+            AppUsers user = ((UserPrincipal)auth.getPrincipal()).getUser();
+            response = new AuthSuccessResponse(user.getId(), user.getEmail(), user.isReset(),
+                    user.getUserData().getFirstName(), user.getUserData().getLastName(), jwtService.generateToken(userLoginRequest.email()));
         }
+
+        return response;
     }
 
     /**
@@ -95,9 +100,9 @@ public class AppUserService {
             userData.setUserType(userType);
             userData.setFirstName(registerRequest.firstName());
             userData.setLastName(registerRequest.lastName());
-            userData.setMobNo(registerRequest.MobNo());
+            userData.setMobNo(registerRequest.mobNo());
             userData.setAddress(registerRequest.address());
-            userData.setPinCode(registerRequest.pincode());
+            userData.setPinCode(registerRequest.pinCode());
             userData.setCity(registerRequest.city());
             userData.setState(registerRequest.state());
             userData.setCountry(registerRequest.country());

@@ -80,7 +80,7 @@ public class IncidentService {
             IncidentData incident = new IncidentData();
             incident.setId(generateIncidentId());
             incident.setUserInfo(user.get());
-            incident.setIncidentDetails(request.incidentDetail());
+            incident.setIncidentDetails(request.incidentDetails());
             try {
                 incident.setPriority(IncidentPriority.valueOf(request.priority()));
             } catch (IllegalArgumentException e) {
